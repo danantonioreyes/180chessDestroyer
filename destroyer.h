@@ -32,7 +32,7 @@ int x_1;
 int y_1;
 int x_2;
 int y_2;
-int score = 0;
+int score = -9999;
 int iterator = 0;
 
 void boardcopy(int** src, int** dest) {
@@ -111,6 +111,7 @@ void expansion(VERTEX* arg, int turn) {
 				arg->children[c]->boardscore = scoreOfBoard(arg->children[c]->boardstate);
 
 				if(arg->children[c]->boardscore >= score) {
+					score = arg->children[c]->boardscore;
 					x_1 = i;
 					y_1 = j;
 					x_2 = x;

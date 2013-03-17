@@ -115,6 +115,7 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 		Keep in each node the first move from the root boardstate (para alam kung ano igagalaw pag nag cut-off na yung search)
 	*/
 	int i;
+	score = -9999; //reset para may moves pa rin kahit bano-bano na
 	
 	NODE* expansionQ = (NODE*)malloc(sizeof(NODE));
 	
