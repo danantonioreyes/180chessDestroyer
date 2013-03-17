@@ -4,6 +4,8 @@
 	Dan Reyes
 */
 
+int alternating = 0;
+
 int weightOf(int arg) {
 	if (arg == BLACKKING) return 25;
 	if (arg == BLACKQUEEN) return 15;

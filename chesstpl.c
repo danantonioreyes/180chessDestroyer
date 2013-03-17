@@ -116,29 +116,23 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	
 	int i,j,x,y;
 	
-	for(i=0; i<=7; i++) 
-		for(j=0; j<=7; j++) {
-			for(x=0; x<=7; x++)
-				for(y=0; y<=7; y++) {
-					
-					//first valid move paradigm
+	//gg exploit
+	/*for(i=7; i>=0; i--) 
+		for(j=7; j>=0; j--) {
+			for(x=7; x>=0; x--)
+				for(y=7; y>=0; y--) {
 					if(valid_move(board,i,j,x,y,BLACKKING)) {
-						*i1 = i;
-						*j1 = j;
-						*i2 = x;
-						*j2 = y;
-						return;
+					movepiece(board,i,j,x,y);
 					}
-					//generate a child
 				}
-		}
-		
-		
+		}*/
 }
 
 
 
 int main(int argc,char *argv[]) {
+		srand(time(NULL));
+	
     int i,i1,j1,i2,j2,checkdir,winner;
     int **board;
     

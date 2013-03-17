@@ -369,8 +369,9 @@ int valid_move(int **board,int i1,int j1,int i2,int j2,int turn) {
             board[i2][j2]=temp;
         }
     }
-    else 
-        printf("\nWrong turn: ");
+	else { 
+        //printf("\nWrong turn: ");
+	}
     
     return validity;
 }
