@@ -10,6 +10,7 @@
 #include<time.h>
 #include<math.h>
 #include "chess.h"
+#include "destroyer.h"
 
 
 void display_board(int *board[]) {
@@ -113,10 +114,7 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 		Keep in each node the first move from the root boardstate (para alam kung ano igagalaw pag nag cut-off na yung search)
 	*/
 	
-	
-	
-	
-    
+	printf("Black moving");    
 }
 
 
@@ -133,6 +131,7 @@ int main(int argc,char *argv[]) {
     init_board(board);
     do {
         display_board(board);
+		printf("Board score: %d", scoreOfBoard(board));
         white_move(&i1,&j1,&i2,&j2);
         if (valid_move(board,i1,j1,i2,j2,WHITEKING)) {
             movepiece(board,i1,j1,i2,j2);
