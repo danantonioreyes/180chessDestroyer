@@ -94,6 +94,28 @@ void black_move(int *i1,int *j1,int *i2,int *j2) {
         *i2, *j2 should containt the coordinates of the target move (both 0 to 7)
      
      */
+	 
+	
+	/*
+		score of a boardstate = summation of pieces
+		
+		BLACK pawn = 1
+		rook = 5
+		knight = 5
+		bishop = 5
+		queen = 10
+		king = 15
+		
+		WHITE weights = negative of black weights
+		e.g. boardstate with all my pieces, 1 pawn lost for white. score = 1
+		
+		For each boardstate, generate all possible moves from that state and recompute score
+		Keep in each node the first move from the root boardstate (para alam kung ano igagalaw pag nag cut-off na yung search)
+	*/
+	
+	
+	
+	
     
 }
 
