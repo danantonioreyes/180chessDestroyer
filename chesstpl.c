@@ -115,6 +115,37 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	*/
 	
 	int i,j,x,y;
+	int c = 0;
+	int c1, c2; //additional counters
+	int** tempboard; //lalagyanan ng board na ilalagay sa vertices
+	
+	//start generating the game tree up to depth 3
+	VERTEX* root = (VERTEX*)malloc(sizeof(VERTEX));
+	root->boardstate = malloc(sizeof(int*64));
+	for(i=0; i<=7; i++)
+		for(j=0; j<=7; j++) root->boardstate[i]j] = board[i][j];
+	
+	for(i=0; i<=7; i++)
+	for(j=0; j<=7; j++) {
+		for(x=0; x<=7; x++)
+		for(y=0; y<=7; y++) {
+			if (valid_move(board,i,j,x,y,BLACKKING)) {
+				for(c1=0; c1<=7; c1++)
+					for(c2=0; c2<=7; c2++) tempboard[c1][c2] = board[c1][c2];
+				
+				movepiece(tempboard,i,j,x,y);
+				
+				
+				root->children[c] = (VERTEX*)malloc(sizeof(VERTEX));
+				root->children[c]->fromx = i;
+				root->children[c]->fromy = j;
+				root->children[c]->tox = x;
+				root->children[c]->toy = y;
+				
+			}
+		}
+	}
+	//end game tree generation
 	
 	//gg exploit
 	/*for(i=7; i>=0; i--) 

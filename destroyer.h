@@ -1,10 +1,20 @@
 /*
-	additional functions and constants
+	additional functions, constants, and structures
 	John Smith Paraggua
 	Dan Reyes
 */
 
-int alternating = 0;
+typedef struct vertex VERTEX;
+struct vertex
+{
+	int boardstate[8][8];
+	int fromx;
+	int fromy;
+	int tox;
+	int toy;
+	VERTEX* children[9999];
+};
+
 
 int weightOf(int arg) {
 	if (arg == BLACKKING) return 25;
