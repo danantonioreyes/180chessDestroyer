@@ -114,7 +114,26 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 		Keep in each node the first move from the root boardstate (para alam kung ano igagalaw pag nag cut-off na yung search)
 	*/
 	
-	printf("Black moving");    
+	int i,j,x,y;
+	
+	for(i=0; i<=7; i++) 
+		for(j=0; j<=7; j++) {
+			for(x=0; x<=7; x++)
+				for(y=0; y<=7; y++) {
+					
+					//first valid move paradigm
+					if(valid_move(board,i,j,x,y,BLACKKING)) {
+						*i1 = i;
+						*j1 = j;
+						*i2 = x;
+						*j2 = y;
+						return;
+					}
+					//generate a child
+				}
+		}
+		
+		
 }
 
 
