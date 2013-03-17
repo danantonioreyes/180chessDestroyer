@@ -14,6 +14,7 @@ struct vertex
 	int tox;
 	int toy;
 	int depth;
+	VERTEX* parent;
 	VERTEX* children[9999];
 };
 
@@ -58,19 +59,46 @@ int scoreOfBoard(int** board) {
 	return retval;
 }
 
-void expansion(VERTEX* arg, int** boardstate, int i, int j, int x, int y, int depth) {
-	arg->boardstate = (int**)malloc(sizeof(int*)*8);
+void expansion(VERTEX* arg, int turn) {
+	int i,j,x,y;
+	int c = 0;
+	int** tempboard;
+	tempboard = (int**)malloc(sizeof(int*)*8);
 	for (i=0; i<8; i++) 
-		arg->boardstate[i]=(int*)malloc(sizeof(int)*8);
-	boardcopy(boardstate, arg->boardstate); //assign to the boardstate of the vertex
-	
-	arg->fromx = i;
-	arg->fromy = j;
-	arg->tox = x;
-	arg->toy = y;
-	arg->depth = depth;
-	
-	arg->boardscore = scoreOfBoard(arg->boardstate);
+        tempboard[i]=(int*)malloc(sizeof(int)*8);//lalagyanan ng board na ilalagay sa vertices
+		
+		
+	//fill the children with nulls
+	for(i=0; i<9999; i++) arg->children[i] = NULL;
+
+	for(i=0; i<=7; i++) 
+	for(j=0; j<=7; j++) {
+		for(x=0; x<=7; x++)
+		for(y=0; y<=7; y++) {
+			if (valid_move(arg->boardstate,i,j,x,y,turn)) {
+			
+				boardcopy(arg->boardstate, tempboard); //get the original boardstate
+				movepiece(tempboard,i,j,x,y); //move the piece
+				
+				arg->children[c] = (VERTEX*)malloc(sizeof(VERTEX));
+				arg->children[c]->boardstate = (int**)malloc(sizeof(int*)*8);
+				for (i=0; i<8; i++) 
+					arg->children[c]->boardstate[i]=(int*)malloc(sizeof(int)*8);
+
+				boardcopy(tempboard, arg->children[c]->boardstate); //assign to the boardstate of the vertex
+				
+				arg->children[c]->fromx = i;
+				arg->children[c]->fromy = j;
+				arg->children[c]->tox = x;
+				arg->children[c]->toy = y;
+				arg->children[c]->depth = arg->depth + 1;
+				arg->children[c]->parent = arg;
+				
+				arg->children[c]->boardscore = scoreOfBoard(arg->children[c]->boardstate);
+				c++;
+			}
+		}
+	}
 	
 }
 
