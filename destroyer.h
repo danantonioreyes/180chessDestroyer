@@ -13,7 +13,15 @@ struct vertex
 	int fromy;
 	int tox;
 	int toy;
+	int depth;
 	VERTEX* children[9999];
+};
+
+typedef struct node NODE;
+struct node
+{
+	VERTEX* v; 	
+	NODE* next;
 };
 
 void boardcopy(int** src, int** dest) {
@@ -48,4 +56,30 @@ int scoreOfBoard(int** board) {
 	}
 
 	return retval;
+}
+
+void expansion(VERTEX* arg, int** boardstate, int i, int j, int x, int y, int depth) {
+	arg->boardstate = (int**)malloc(sizeof(int*)*8);
+	for (i=0; i<8; i++) 
+		arg->boardstate[i]=(int*)malloc(sizeof(int)*8);
+	boardcopy(boardstate, arg->boardstate); //assign to the boardstate of the vertex
+	
+	arg->fromx = i;
+	arg->fromy = j;
+	arg->tox = x;
+	arg->toy = y;
+	arg->depth = depth;
+	
+	arg->boardscore = scoreOfBoard(arg->boardstate);
+	
+}
+
+void insert(NODE* list, VERTEX* arg) {
+	NODE* temp = (NODE*)malloc(sizeof(NODE));
+	temp->v = arg;
+	temp->next = NULL;
+	
+	NODE* alpha = list;
+	while(alpha->next != NULL) alpha = alpha->next;
+	alpha->next = temp;
 }
