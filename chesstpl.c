@@ -9,9 +9,6 @@
 #include<stdlib.h>
 #include<time.h>
 #include<math.h>
-
-void movepiece(int **board,int i1,int j1,int i2,int j2);
-
 #include "chess.h"
 #include "destroyer.h"
 
@@ -146,6 +143,8 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	VERTEX* alpha;
 	NODE* beta;
 	int c = 0;
+	
+	/*this block expands until depth 3, need to fix
 	while(expansionQ->next->v->depth <= 3)
 	{
 		alpha = expansionQ->next->v;
@@ -157,7 +156,13 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 		expansionQ->next = expansionQ->next->next;
 		free(beta);
 	}
+	*/
 	//end game tree generation
+	
+	*i1 = x_1;
+	*j1 = y_1;
+	*i2 = x_2;
+	*j2 = y_2;
 	
 	
 	

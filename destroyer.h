@@ -4,6 +4,9 @@
 	Dan Reyes
 */
 
+void movepiece(int **board,int i1,int j1,int i2,int j2);
+
+
 typedef struct vertex VERTEX;
 struct vertex
 {
@@ -24,6 +27,13 @@ struct node
 	VERTEX* v; 	
 	NODE* next;
 };
+
+int x_1;
+int y_1;
+int x_2;
+int y_2;
+int score = 0;
+int iterator = 0;
 
 void boardcopy(int** src, int** dest) {
 	int i,j;
@@ -61,6 +71,7 @@ int scoreOfBoard(int** board) {
 
 void expansion(VERTEX* arg, int turn) {
 	int i,j,x,y;
+	int counter;
 	int c = 0;
 	int** tempboard;
 	tempboard = (int**)malloc(sizeof(int*)*8);
@@ -76,25 +87,36 @@ void expansion(VERTEX* arg, int turn) {
 		for(x=0; x<=7; x++)
 		for(y=0; y<=7; y++) {
 			if (valid_move(arg->boardstate,i,j,x,y,turn)) {
-			
+				
 				boardcopy(arg->boardstate, tempboard); //get the original boardstate
 				movepiece(tempboard,i,j,x,y); //move the piece
 				
 				arg->children[c] = (VERTEX*)malloc(sizeof(VERTEX));
 				arg->children[c]->boardstate = (int**)malloc(sizeof(int*)*8);
-				for (i=0; i<8; i++) 
-					arg->children[c]->boardstate[i]=(int*)malloc(sizeof(int)*8);
-
-				boardcopy(tempboard, arg->children[c]->boardstate); //assign to the boardstate of the vertex
+				for (counter=0; counter<8; counter++) 
+					arg->children[c]->boardstate[counter]=(int*)malloc(sizeof(int)*8);
 				
+		
+				boardcopy(tempboard, arg->children[c]->boardstate); //assign to the boardstate of the vertex
+
 				arg->children[c]->fromx = i;
 				arg->children[c]->fromy = j;
 				arg->children[c]->tox = x;
 				arg->children[c]->toy = y;
+
 				arg->children[c]->depth = arg->depth + 1;
+
 				arg->children[c]->parent = arg;
-				
+
 				arg->children[c]->boardscore = scoreOfBoard(arg->children[c]->boardstate);
+
+				if(arg->children[c]->boardscore >= score) {
+					x_1 = i;
+					y_1 = j;
+					x_2 = x;
+					y_2 = y;					
+				}
+				
 				c++;
 			}
 		}
