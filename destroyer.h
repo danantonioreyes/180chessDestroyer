@@ -7,7 +7,8 @@
 typedef struct vertex VERTEX;
 struct vertex
 {
-	int boardstate[8][8];
+	int** boardstate;
+	int boardscore;
 	int fromx;
 	int fromy;
 	int tox;
@@ -15,6 +16,11 @@ struct vertex
 	VERTEX* children[9999];
 };
 
+void boardcopy(int** src, int** dest) {
+	int i,j;
+	for(i=0; i<=7; i++)
+		for(j=0; j<=7; j++) dest[i][j] = src[i][j];
+}
 
 int weightOf(int arg) {
 	if (arg == BLACKKING) return 25;

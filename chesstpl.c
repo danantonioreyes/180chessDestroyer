@@ -117,24 +117,34 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	int i,j,x,y;
 	int c = 0;
 	int c1, c2; //additional counters
-	int** tempboard; //lalagyanan ng board na ilalagay sa vertices
+	int** tempboard;
+	tempboard = (int**)malloc(sizeof(int*)*8);
+	for (i=0; i<8; i++) 
+        tempboard[i]=(int*)malloc(sizeof(int)*8);//lalagyanan ng board na ilalagay sa vertices
+		
 	
 	//start generating the game tree up to depth 3
 	VERTEX* root = (VERTEX*)malloc(sizeof(VERTEX));
-	root->boardstate = malloc(sizeof(int*64));
-	for(i=0; i<=7; i++)
-		for(j=0; j<=7; j++) root->boardstate[i]j] = board[i][j];
+	root->boardstate = (int**)malloc(sizeof(int*)*8);
+	for (i=0; i<8; i++) 
+        root->boardstate[i]=(int*)malloc(sizeof(int)*8);
+	boardcopy(board, root->boardstate);
 	
-	for(i=0; i<=7; i++)
+	for(i=0; i<9999; i++) root->children[i] = NULL;
+	
+	
+	
+	//expand the root
+	for(i=0; i<=7; i++) 
 	for(j=0; j<=7; j++) {
 		for(x=0; x<=7; x++)
 		for(y=0; y<=7; y++) {
 			if (valid_move(board,i,j,x,y,BLACKKING)) {
+				
 				for(c1=0; c1<=7; c1++)
 					for(c2=0; c2<=7; c2++) tempboard[c1][c2] = board[c1][c2];
 				
 				movepiece(tempboard,i,j,x,y);
-				
 				
 				root->children[c] = (VERTEX*)malloc(sizeof(VERTEX));
 				root->children[c]->fromx = i;
@@ -142,9 +152,29 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 				root->children[c]->tox = x;
 				root->children[c]->toy = y;
 				
+				root->children[c]->boardstate = (int**)malloc(sizeof(int*)*8);
+				for (i=0; i<8; i++) 
+					root->children[c]->boardstate[i]=(int*)malloc(sizeof(int)*8);
+				boardcopy(tempboard, root->children[c]->boardstate);
+				
 			}
 		}
 	}
+	//end expand the root
+	
+	//next level expansion: enemy move
+	for(c=0; root->children[c] != NULL; c++) {
+		for(i=0; i<=7; i++)
+		for(j=0; j<=7; j++) {
+			for(x=0; y<=7; x++)
+			for(y=0; y<=7; y++) {
+				
+			}
+		}
+	}
+	
+	
+	
 	//end game tree generation
 	
 	//gg exploit
@@ -175,7 +205,6 @@ int main(int argc,char *argv[]) {
     init_board(board);
     do {
         display_board(board);
-		printf("Board score: %d", scoreOfBoard(board));
         white_move(&i1,&j1,&i2,&j2);
         if (valid_move(board,i1,j1,i2,j2,WHITEKING)) {
             movepiece(board,i1,j1,i2,j2);
