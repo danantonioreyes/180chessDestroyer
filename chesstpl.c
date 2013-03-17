@@ -86,7 +86,7 @@ void movepiece(int **board,int i1,int j1,int i2,int j2) {
         wkmoved=1;
 }
 
-void black_move(int *i1,int *j1,int *i2,int *j2) {
+void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
     
     /*
         Your code goes here.
@@ -146,7 +146,7 @@ int main(int argc,char *argv[]) {
                 else
                     printf("\nCheck\n");
             display_board(board);
-            black_move(&i1,&j1,&i2,&j2);
+            black_move(board, &i1,&j1,&i2,&j2);
             if (valid_move(board,i1,j1,i2,j2,BLACKKING)) {
                 movepiece(board,i1,j1,i2,j2);
                 checkdir=checked(board,WHITEKING);
