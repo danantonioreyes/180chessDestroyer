@@ -14,7 +14,7 @@
 #define BOARD_HEIGHT 8
 #define WHITE 69
 #define BLACK 669
-#define MAX_DEPTH 3
+#define MAX_DEPTH 1
 #define INFTY 121487
 
 // IDEA:
@@ -85,8 +85,21 @@ void movepiece(int **board,int i1,int j1,int i2,int j2) {
 }
 
 Point2D findNextPiece(int **board, Point2D start, int color) {
-        for (; start.y < BOARD_HEIGHT && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.y)
-                for (; start.x < BOARD_WIDTH && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.x);
+        //printf("search starts at %i%i\n", start.y, start.x);
+        //for (; start.y < BOARD_HEIGHT && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.y) {
+        //        printf("color %i getcol %i %i\n", color, getColor(board[start.y][start.x]), board[start.y][start.x]);
+        //        for (; start.x < BOARD_WIDTH && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.x) {
+        //                printf("yx %i%i\n", start.y, start.x);
+        //        }
+        //        start.x = 0;
+        //}
+        for(; start.y < BOARD_HEIGHT; ++start.y) {
+                for (; start.x < BOARD_WIDTH; ++start.x) {
+                        if (board[start.y][start.x] != BLANK && color == getColor(board[start.y][start.x]))
+                                return start;
+                }
+                start.x = 0;
+        }
 
         return start;
 }
@@ -113,59 +126,100 @@ Node* freeList(Node* head) {
         return NULL;
 }
 
+void displayTree(Node* root, int depth) {
+        printf("\n\nat depth %i\n", depth);
+        while (root != NULL) {
+                Node* i = root;
+                printf("\n");
+                while (i != NULL) {
+                        printf("M: %i%i-%i%i A: %i B: %i E: %i ", i->movement.source.y, i->movement.source.x, i->movement.dest.y, i->movement.dest.x, i->alpha, i->beta, i->ev_sign);
+                        i = i->next;
+                }
+                root = root->children;
+                if (root != NULL)
+                        root = root->next;
+        }
+}
+
 // TODO ETO NA YUNG SUSUNOD
 void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NEEDED ARGUMENTS
+        //printf("alphabeta %i %i \ndepth %i\n", parent->alpha, parent->beta, depth);
+        
         Point2D searchStart = {0,0};
         --depth;
         if (depth == 0) {
                 // return the max/min sa buong list
+                searchStart = findNextPiece(board, searchStart, color);
                 while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
-                        searchStart = findNextPiece(board, searchStart, color);
+                        //printf("Found shit at: %i%i\n ", searchStart.y, searchStart.x);
                         parent->children = generateMoves(board, searchStart, parent);
 
-                        display_board(board);
                         Node* traverser = parent->children->next;
-                        while (traverser != NULL && parent->alpha < traverser->beta) {
+                        //TODO REMOVE
+                        //if (traverser == NULL) {
+                        //        printf("   NULL eh\n");
+                        //}
+                        //else if (parent->alpha >= parent->beta) {
+                        //        printf("   pruned\n");
+                        //}
+                        
+                        while (traverser != NULL && parent->alpha < parent->beta) {
                                 movePieceForTraversal(board, traverser);
+                                //display_board(board);
                                 int temp = traverser->ev_sign * scoreOfBoard(board, color) * -1;   // ev_sign*score -> invert sign of leaf
                                 if (temp > parent->alpha) {
                                         parent->alpha = temp;
+                                        if (depth == MAX_DEPTH - 1) {
+                                                // then the parent == root
+                                                parent->movement = traverser->movement;
+                                        }
                                 }
                                 revertPieceMove(board, traverser);
                                 traverser = traverser->next;
                         }
+                        //displayTree(parent,depth);
                         parent->children = freeList(parent->children);
-                        parent->alpha   *= -1;                          // invert sign after everything has been considered
+
+                        if (searchStart.x+1 >= BOARD_WIDTH) {
+                                ++searchStart.y;
+                                searchStart.x = 0;
+                        } else{
+                                ++searchStart.x;
+                        }
+                        searchStart = findNextPiece(board, searchStart, color);
+                        printf("search res at %i%i", searchStart.y, searchStart.x);
+                }
+                parent->alpha   *= -1;                          // invert sign after everything has been considered
+                //printf("alphabeta %i %i \n", parent->alpha, parent->beta);
+        }
+        else {
+                // NOTE: 1ST PARENT IS ROOT NODE
+                searchStart = findNextPiece(board, searchStart, color);
+                while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
+                        parent->children = generateMoves(board, searchStart, parent);
+
+                        Node* traverser = parent->children->next;
+                        while (traverser != NULL && parent->alpha < parent->beta) {
+                                movePieceForTraversal(board, traverser);
+                                minimax(board, color, depth, traverser);
+                                if (traverser->alpha > parent->alpha) {
+                                        parent->alpha = traverser->alpha;
+                                        if (depth == MAX_DEPTH - 1) {
+                                                // then the parent == root
+                                                parent->movement = traverser->movement;
+                                        }
+                                }
+                                revertPieceMove(board, traverser);
+                                traverser = traverser->next;
+                        }
+                        //displayTree(parent,depth);
+                        parent->children = freeList(parent->children);
 
                         searchStart.y += (searchStart.x+1)/BOARD_WIDTH;
                         searchStart.x = (searchStart.x+1)%BOARD_WIDTH;
-                }
-        }
-
-        // NOTE: 1ST PARENT IS ROOT NODE
-        while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
-                searchStart = findNextPiece(board, searchStart, color);
-                parent->children = generateMoves(board, searchStart, parent);
-
-                Node* traverser = parent->children->next;
-                while (traverser != NULL && parent->alpha < traverser->beta) {
-                        movePieceForTraversal(board, traverser);
-                        minimax(board, color, depth, traverser);
-                        if (traverser->alpha > parent->alpha) {
-                                parent->alpha = traverser->alpha;
-                                if (depth == MAX_DEPTH - 1) {
-                                        // then the parent == root
-                                        parent->movement = traverser->movement;
-                                }
-                        }
-                        revertPieceMove(board, traverser);
-                        traverser = traverser->next;
+                        searchStart = findNextPiece(board, searchStart, color);
                 }
                 parent->alpha *= -1;            // invert sign when it pops
-                parent->children = freeList(parent->children);
-
-                searchStart.y += (searchStart.x+1)/BOARD_WIDTH;
-                searchStart.x = (searchStart.x+1)%BOARD_WIDTH;
         }
 }
 

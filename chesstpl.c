@@ -53,12 +53,14 @@ void white_move(int *i1,int *j1,int *i2,int *j2) {
 //}
 
 void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
-        Node* root = createNode((Movement){0}, INFTY, -INFTY, 1, NULL, NULL);
+        Node* root = createNode((Movement){0}, -INFTY, INFTY, 1, NULL, NULL);
         minimax(board, BLACK, MAX_DEPTH, root);
-        *i1 = root->movement.source.x;
-        *j1 = root->movement.source.y;
-        *i2 = root->movement.dest.x;
-        *j2 = root->movement.dest.y;
+        (*i1) = root->movement.source.y;
+        (*j1) = root->movement.source.x;
+        (*i2) = root->movement.dest.y;
+        (*j2) = root->movement.dest.x;
+        printf("%i\n%i %i\n%i %i",root->alpha, *i1, *j1, *i2, *j2);
+        free(root);
 }
 
 
