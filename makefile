@@ -1,13 +1,18 @@
 CC = gcc
-CFLAGS = -o -lm
+CFLAGS = -lm
 SOURCES = chesstpl.c
-OBJECTS = $(SOURCES:.cpp=.o)
+HEADERS = shiva.h
+OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = test
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(EXECUTABLE) 
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(OBJECTS) -o $@ $(CFLAGS)
 
-.cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
+.c.o: 
+	$(CC) $< -c $(CFLAGS) 
+
+clean: 
+	rm $(OBJECTS)
+	rm $(EXECUTABLE)
