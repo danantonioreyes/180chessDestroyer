@@ -60,6 +60,7 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
         (*i2) = root->movement.dest.y;
         (*j2) = root->movement.dest.x;
         printf("%i\n%i %i\n%i %i",root->alpha, *i1, *j1, *i2, *j2);
+        printf("Black move: %c%i %c%i", (*i1)+'A', (*j1)+1, (*i2)+'A', (*j2)+1);
         free(root);
 }
 

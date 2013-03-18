@@ -14,7 +14,7 @@
 #define BOARD_HEIGHT 8
 #define WHITE 69
 #define BLACK 669
-#define MAX_DEPTH 5
+#define MAX_DEPTH 7
 #define INFTY 121487
 
 // IDEA:
@@ -167,6 +167,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 movePieceForTraversal(board, traverser);
                                 //display_board(board);
                                 int temp = traverser->ev_sign * scoreOfBoard(board, color) * -1;   // ev_sign*score -> invert sign of leaf
+                                //traverser->alpha = temp; //TODO REMOVE
                                 if (temp > parent->alpha) {
                                         parent->alpha = temp;
                                         if (depth == MAX_DEPTH - 1) {
@@ -238,17 +239,17 @@ int weightOf(int arg, int color) {
         int multiplier = (color == BLACK)? 1:-1;
 
         switch (arg) {
-                case BLACKKING:         return multiplier*25;
-                case BLACKQUEEN:        return multiplier*15;
+                case BLACKKING:         return multiplier*50;
+                case BLACKQUEEN:        return multiplier*25;
                 case BLACKBISHOP:       return multiplier*10;
-                case BLACKKNIGHT:       return multiplier*10;
-                case BLACKROOK:         return multiplier*10;
+                case BLACKKNIGHT:       return multiplier*15;
+                case BLACKROOK:         return multiplier*15;
                 case BLACKPAWN:         return multiplier*5;
-                case WHITEKING:         return multiplier*-25;
-                case WHITEQUEEN:        return multiplier*-15;
+                case WHITEKING:         return multiplier*-50;
+                case WHITEQUEEN:        return multiplier*-25;
                 case WHITEBISHOP:       return multiplier*-10;
-                case WHITEKNIGHT:       return multiplier*-10;
-                case WHITEROOK:         return multiplier*-10;
+                case WHITEKNIGHT:       return multiplier*-15;
+                case WHITEROOK:         return multiplier*-15;
                 case WHITEPAWN:         return multiplier*-5;
                 case BLANK:             return multiplier*0;
         }

@@ -148,7 +148,12 @@ Node* pawnMoves(int **board, Point2D location, Node* parent) {
                 head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // eat
-        if (valid_move(board, location.y, location.x+advance, location.y+advance, location.x, turn)) {
+        if (valid_move(board, location.y, location.x, location.y+advance, location.x+advance, turn)) {
+                movement.dest.y = location.y+advance;
+                movement.dest.x = location.x+advance;
+                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+        }
+        if (valid_move(board, location.y, location.x, location.y+advance, location.x-advance, turn)) {
                 movement.dest.y = location.y+advance;
                 movement.dest.x = location.x+advance;
                 head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
