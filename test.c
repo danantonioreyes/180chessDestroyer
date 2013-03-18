@@ -95,9 +95,14 @@ int main() {
                 board[i]=(int*)malloc(sizeof(int)*8);
 
         init_board(board);
-        board[3][3] = WHITEQUEEN;
+        board[3][3] = WHITEKNIGHT;
         display_board(board);
-        displayMoves(board, queenMoves(board, location, parent));
+        Node* head = horseMoves(board, location, parent);
+        displayMoves(board, head);
+        printf("%i %i %i %i\n", head->children->movement.dest.x, head->children->movement.dest.y, head->children->movement.source.x, head->children->movement.source.y);
+        if (head->children == NULL) {
+                printf("haha mali\n");
+        }
         //Node* pawnMoves(int **board, Point2D location, Node* parent)
 
         return 0;
