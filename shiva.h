@@ -14,7 +14,7 @@
 #define BOARD_HEIGHT 8
 #define WHITE 69
 #define BLACK 669
-#define MAX_DEPTH 1
+#define MAX_DEPTH 5
 #define INFTY 121487
 
 // IDEA:
@@ -187,7 +187,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 ++searchStart.x;
                         }
                         searchStart = findNextPiece(board, searchStart, color);
-                        printf("search res at %i%i", searchStart.y, searchStart.x);
+                        //printf("search res at %i%i", searchStart.y, searchStart.x);
                 }
                 parent->alpha   *= -1;                          // invert sign after everything has been considered
                 //printf("alphabeta %i %i \n", parent->alpha, parent->beta);
