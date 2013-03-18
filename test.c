@@ -64,12 +64,6 @@ void display_board(int *board[]) {
         printf("\n");
 }
 
-void revertMove(int** board, Node* node) {
-        // TODO HANDLE castling here and in kingMoves
-        board[node->movement.source.y][node->movement.source.x] = board[node->movement.dest.y][node->movement.dest.x];
-        board[node->movement.dest.y][node->movement.dest.x] = node->eaten;
-}
-
 void displayMoves(int** board, Node* list) {
         Node* traverser = list;
 

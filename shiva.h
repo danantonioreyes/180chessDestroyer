@@ -15,11 +15,74 @@
 #define WHITE 69
 #define BLACK 669
 #define MAX_DEPTH 3
+#define INFTY 121487
 
 // IDEA:
 /*      isave ko kaya yung game tree tapos yun nalang ituloy pag nag move yung kalaban
  *      ^ instead of that, sisirain ko yung tree habang traversal to save space at baka pwede ko pa pahabain yung max_depth kung sakali
  */
+
+// galing to sa template. binura ko muna yung nandun. 
+void display_board(int *board[]) {
+        int i,j;
+        int width=8,rows=8;
+
+        printf("\n    1    2    3    4    5    6    7    8\n");    
+        printf("  -----------------------------------------\n");    
+        for (i=0; i<width; i++) {
+                printf("%c |",i+65);
+                for (j=0; j<rows; j++)
+                        switch (board[i][j]) {
+                                case BLACKKING:   printf(" BK |"); break;
+                                case BLACKQUEEN:  printf(" BQ |"); break;
+                                case BLACKBISHOP: printf(" BB |"); break;
+                                case BLACKKNIGHT: printf(" BH |"); break;
+                                case BLACKROOK:   printf(" BR |"); break;
+                                case BLACKPAWN:   printf(" BP |"); break;
+                                case WHITEKING:   printf(" WK |"); break;
+                                case WHITEQUEEN:  printf(" WQ |"); break;
+                                case WHITEBISHOP: printf(" WB |"); break;
+                                case WHITEKNIGHT: printf(" WH |"); break;
+                                case WHITEROOK:   printf(" WR |"); break;
+                                case WHITEPAWN:   printf(" WP |"); break;                    
+                                default:          printf("    |");
+                        }
+
+
+                printf("\n  -----------------------------------------\n");
+        }
+        printf("    1    2    3    4    5    6    7    8\n");    
+
+        printf("\n");
+}
+
+
+void movepiece(int **board,int i1,int j1,int i2,int j2) {
+
+        board[i2][j2]=board[i1][j1];
+        board[i1][j1]=BLANK;
+
+        //check if castling
+        if (board[i2][j2]==BLACKKING OR board[i2][j2]==WHITEKING)
+        {
+                if (j2>j1+1) {
+                        board[board[i2][j2]-1][5]=board[i2][j2]+4;
+                        board[board[i2][j2]-1][7]=BLANK;
+                }
+                if (j2<j1-2) {
+                        board[board[i2][j2]-1][2]=board[i2][j2]+4;
+                        board[board[i2][j2]-1][0]=BLANK;            
+                }
+        }
+
+        checkqueening(board);
+
+        //if kings moved, no more castling
+        if (board[i2][j2]==BLACKKING)
+                bkmoved=1;
+        if (board[i2][j2]==WHITEKING)
+                wkmoved=1;
+}
 
 Point2D findNextPiece(int **board, Point2D start, int color) {
         for (; start.y < BOARD_HEIGHT && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.y)
@@ -28,24 +91,89 @@ Point2D findNextPiece(int **board, Point2D start, int color) {
         return start;
 }
 
+void movePieceForTraversal(int** board, Node* node) {
+        node->eaten = board[node->movement.dest.y][node->movement.dest.x];
+        movepiece(board, node->movement.source.y, node->movement.source.x, node->movement.dest.y, node->movement.dest.x);
+}
+
+void revertPieceMove(int** board, Node* node) {
+        // TODO HANDLE castling here and in kingMoves
+        board[node->movement.source.y][node->movement.source.x] = board[node->movement.dest.y][node->movement.dest.x];
+        board[node->movement.dest.y][node->movement.dest.x] = node->eaten;
+}
+
+Node* freeList(Node* head) {
+        Node* traverser1 = head;
+
+        while(traverser1 != NULL) {
+                Node* traverser2 = traverser1->next;
+                free(traverser1);
+                traverser1 = traverser2;
+        }
+        return NULL;
+}
+
 // TODO ETO NA YUNG SUSUNOD
-Node* generateChildren(int **board, int color, int depth) { // TODO CHECK NEEDED ARGUMENTS
-
-        if (depth == MAX_DEPTH-1) {
-                // eto rin ata yung normal case. haha
-                // traverse all the siblings for the best move
-                // return the best move
-        }
-
+void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NEEDED ARGUMENTS
+        Point2D searchStart = {0,0};
+        --depth;
         if (depth == 0) {
-                // return the max/min
+                // return the max/min sa buong list
+                while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
+                        searchStart = findNextPiece(board, searchStart, color);
+                        parent->children = generateMoves(board, searchStart, parent);
+
+                        display_board(board);
+                        Node* traverser = parent->children->next;
+                        while (traverser != NULL && parent->alpha < traverser->beta) {
+                                movePieceForTraversal(board, traverser);
+                                int temp = traverser->ev_sign * scoreOfBoard(board, color) * -1;   // ev_sign*score -> invert sign of leaf
+                                if (temp > parent->alpha) {
+                                        parent->alpha = temp;
+                                }
+                                revertPieceMove(board, traverser);
+                                traverser = traverser->next;
+                        }
+                        parent->children = freeList(parent->children);
+                        parent->alpha   *= -1;                          // invert sign after everything has been considered
+
+                        searchStart.y += (searchStart.x+1)/BOARD_WIDTH;
+                        searchStart.x = (searchStart.x+1)%BOARD_WIDTH;
+                }
         }
 
-        Point2D searchStart = (0,0);
-        while (searchStart.x < BOARD_WIDTH && searchStart.y < BOARD_HEIGHT) {
-                Point2D location = findNextPiece(board, searchStart);
+        // NOTE: 1ST PARENT IS ROOT NODE
+        while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
+                searchStart = findNextPiece(board, searchStart, color);
+                parent->children = generateMoves(board, searchStart, parent);
+
+                Node* traverser = parent->children->next;
+                while (traverser != NULL && parent->alpha < traverser->beta) {
+                        movePieceForTraversal(board, traverser);
+                        minimax(board, color, depth, traverser);
+                        if (traverser->alpha > parent->alpha) {
+                                parent->alpha = traverser->alpha;
+                                if (depth == MAX_DEPTH - 1) {
+                                        // then the parent == root
+                                        parent->movement = traverser->movement;
+                                }
+                        }
+                        revertPieceMove(board, traverser);
+                        traverser = traverser->next;
+                }
+                parent->alpha *= -1;            // invert sign when it pops
+                parent->children = freeList(parent->children);
+
+                searchStart.y += (searchStart.x+1)/BOARD_WIDTH;
+                searchStart.x = (searchStart.x+1)%BOARD_WIDTH;
         }
 }
+
+//void getMaxOnLeaf(Node* parent) {
+//        Node* traverser = head->next;
+//        free(head);
+//}
+
 
 Node* possiblePieceMove(int **board, Point2D referencePiece) {
         //referencePiece = shit;

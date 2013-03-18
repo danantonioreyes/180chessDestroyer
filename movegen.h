@@ -10,12 +10,6 @@
         int turn = GET_TURN(location.y, location.x);\
         Movement movement = {.source = location}
 
-int areEnemies(int piece1, int piece2) {        // assumes that the constant for BLANK is in the middle of constants for WHITE and BLACK
-        if (!(piece1 < BLANK) != !(piece2 < BLANK))
-                return 1;
-        return 0;
-}       // TODO DELETE
-
 
 Node* horseMoves(int **board, Point2D location, Node* parent) {
         Node* head = createHeadNode();
@@ -165,5 +159,31 @@ Node* pawnMoves(int **board, Point2D location, Node* parent) {
 
 Node* queenMoves(int **board, Point2D location, Node* parent) {
         return push(bishopMoves(board, location, parent), rookMoves(board, location, parent));
+}
+
+Node* generateMoves(int** board, Point2D location, Node* parent) {
+        switch (board[location.y][location.x]) {
+                case WHITEKING:
+                case BLACKKING:
+                        return kingMoves(board, location, parent);
+                case WHITEPAWN:
+                case BLACKPAWN:
+                        return pawnMoves(board, location, parent);
+                case WHITEQUEEN:
+                case BLACKQUEEN:
+                        return queenMoves(board, location, parent);
+                case WHITEKNIGHT:
+                case BLACKKNIGHT:
+                        return horseMoves(board, location, parent);
+                case WHITEROOK:
+                case BLACKROOK:
+                        return rookMoves(board, location, parent);
+                case WHITEBISHOP:
+                case BLACKBISHOP:
+                        return bishopMoves(board, location, parent);
+        }
+        printf("ERROR: Unknown piece\n");
+        printf("%i %i %i", board[location.y][location.x], location.y, location.x);
+        return NULL;
 }
 #endif
