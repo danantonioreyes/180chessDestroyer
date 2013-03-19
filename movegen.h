@@ -2,6 +2,8 @@
 #define MOVEGEN_H
 #include <math.h>
 #include "listmanipulator.h"
+#define WHITE 69
+#define BLACK -69
 #define GET_TURN(y,x) board[y][x] > BLANK ? WHITEKING : BLACKKING
 #define GET_NODE_ATTRIB(parent) \
         int alpha   = -parent->beta;\
@@ -9,7 +11,6 @@
         int ev_sign = -parent->ev_sign;\
         int turn = GET_TURN(location.y, location.x);\
         Movement movement = {.source = location}
-
 
 Node* horseMoves(int **board, Point2D location, Node* parent) {
         Node* head = createHeadNode();
@@ -34,29 +35,53 @@ Node* horseMoves(int **board, Point2D location, Node* parent) {
 Node* kingMoves(int **board, Point2D location, Node* parent) {
         Node* head  = createHeadNode();
         GET_NODE_ATTRIB(parent);                // NOTE: this initializes some variables
+
+        movement.dest.x = location.x;
         // move up
         if (valid_move(board, location.y, location.x, location.y-1, location.x, turn)) {
                 movement.dest.y = location.y-1;
-                movement.dest.x = location.x;
                 head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move down
         if (valid_move(board, location.y, location.x, location.y+1, location.x, turn)) {
                 movement.dest.y = location.y+1;
-                movement.dest.x = location.x;
                 head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
+        movement.dest.y = location.y;
         // move right
         if (valid_move(board, location.y, location.x, location.y, location.x+1, turn)) {
-                movement.dest.y = location.y;
                 movement.dest.x = location.x+1;
                 head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move left
         if (valid_move(board, location.y, location.x, location.y, location.x-1, turn)) {
-                movement.dest.y = location.y;
                 movement.dest.x = location.x-1;
                 head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+        }
+
+        // TODO check if we can castle
+        if (location.x == 4) {
+                if (location.y == 7 && board[location.y][location.x] == WHITEKING) {
+                        movement.dest.y = 7;
+                        if(valid_move(board, 7, 4, 7, 1, WHITE)) {
+                                movement.dest.x = 1;
+                                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                        }
+                        if(valid_move(board, 7, 4, 7, 6, WHITE)) {
+                                movement.dest.x = 6;
+                                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                        }
+                } else if (location.y == 0 && board[location.y][location.x] == BLACKKING) {
+                        movement.dest.y = 0;
+                        if(valid_move(board, 0, 4, 0, 1, BLACKKING)) {
+                                movement.dest.x = 1;
+                                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                        }
+                        if(valid_move(board, 0, 4, 0, 6, BLACKKING)) {
+                                movement.dest.x = 6;
+                                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                        }
+                }
         }
 
         return head;
@@ -191,4 +216,9 @@ Node* generateMoves(int** board, Point2D location, Node* parent) {
         printf("%i %i %i", board[location.y][location.x], location.y, location.x);
         return NULL;
 }
+
+int getColor(int pieceNum) {
+        return (pieceNum < BLANK)? BLACK:WHITE;
+}
+
 #endif

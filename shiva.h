@@ -10,12 +10,9 @@
 #include "chess.h"
 #include "movegen.h"
 #include "listmanipulator.h"
-#define BOARD_WIDTH 8
-#define BOARD_HEIGHT 8
-#define WHITE 69
-#define BLACK -69
+#include "moveevaluator.h"
 #define MAX_DEPTH 6
-#define INFTY 121487
+#define INFTY 1241894
 
 // IDEA:
 /*      isave ko kaya yung game tree tapos yun nalang ituloy pag nag move yung kalaban
@@ -104,6 +101,18 @@ void movePieceForTraversal(int** board, Node* node) {
 
 void revertPieceMove(int** board, Node* node) {
         // TODO HANDLE castling here and in kingMoves
+        if (node->pieceMoved == BLACKKING || node->pieceMoved == WHITEKING) {
+                if (abs(node->movement.dest.x - node->movement.source.x) > 1)  {        // castling is the only reason for the king to be able to move to more than one tile
+                        // put the rook to the end of the board
+                        if (node->movement.dest.x == 1) {
+                                board[node->movement.dest.y][2] = BLANK;
+                                board[node->movement.dest.y][0] = (node->pieceMoved == BLACKKING)? BLACKROOK:WHITEROOK;
+                        } else if (node->movement.dest.x == 6){
+                                board[node->movement.dest.y][5] = BLANK;
+                                board[node->movement.dest.y][7] = (node->pieceMoved == BLACKKING)? BLACKROOK:WHITEROOK;
+                        }
+                }
+        }
         board[node->movement.source.y][node->movement.source.x] = node->pieceMoved;
         board[node->movement.dest.y][node->movement.dest.x] = node->eaten;
 }
@@ -222,53 +231,6 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                 }
                 parent->alpha *= -1;            // invert sign when it pops
         }
-}
-
-//void getMaxOnLeaf(Node* parent) {
-//        Node* traverser = head->next;
-//        free(head);
-//}
-
-
-Node* possiblePieceMove(int **board, Point2D referencePiece) {
-        //referencePiece = shit;
-        // TODO FIX THIS
-} 
-
-int weightOf(int arg, int color) {
-        int multiplier = (color == BLACK)? 1:-1;
-
-        switch (arg) {
-                case BLACKKING:         return multiplier*50;
-                case BLACKQUEEN:        return multiplier*25;
-                case BLACKBISHOP:       return multiplier*10;
-                case BLACKKNIGHT:       return multiplier*15;
-                case BLACKROOK:         return multiplier*15;
-                case BLACKPAWN:         return multiplier*5;
-                case WHITEKING:         return multiplier*-50;
-                case WHITEQUEEN:        return multiplier*-25;
-                case WHITEBISHOP:       return multiplier*-10;
-                case WHITEKNIGHT:       return multiplier*-15;
-                case WHITEROOK:         return multiplier*-15;
-                case WHITEPAWN:         return multiplier*-5;
-                case BLANK:             return multiplier*0;
-        }
-}
-
-int scoreOfBoard(int** board, int color) {
-	int retval = 0;
-	int i,j;
-	for(i=0; i<=7; i++) {
-		for(j=0; j<=7; j++) {
-			retval = retval + weightOf(board[i][j], color);
-		}
-	}
-
-	return retval;
-}
-
-int getColor(int pieceNum) {
-        return (pieceNum < BLANK)? BLACK:WHITE;
 }
 
 #endif
