@@ -172,81 +172,113 @@ static int blackKingLatePosition[BOARD_HEIGHT][BOARD_WIDTH] = {
         {-50,-40,-30,-20,-20,-30,-40,-50}
 };
 
-int scoreOfBoard(int** board, int color) {
+//int scoreOfBoard(int** board, int color) {
+//        int multiplier = (color == BLACK)? 1:-1;
+//	int retval = 0;
+//	int i,j;
+//        int remainingOfficial = MAX_OFFICIAL;
+//        Point2D blackKingLocation, whiteKingLocation;
+//
+//	for(i=0; i<=7; i++) {
+//		for(j=0; j<=7; j++) {
+//                        switch(board[i][j]) {
+//                                case BLACKKING:
+//                                        retval += KING_VALUE;
+//                                        blackKingLocation.x = j;
+//                                        blackKingLocation.y = i;
+//                                        break;
+//                                case BLACKQUEEN:
+//                                        retval += QUEEN_VALUE;
+//                                        retval += blackQueenPosition[i][j];
+//                                        break;
+//                                case BLACKBISHOP:
+//                                        retval += BISHOP_VALUE;
+//                                        retval += blackBishopPosition[i][j];
+//                                        break;
+//                                case BLACKKNIGHT:
+//                                        retval += KNIGHT_VALUE;
+//                                        retval += blackKnightPosition[i][j];
+//                                        break;
+//                                case BLACKROOK:
+//                                        retval += ROOK_VALUE;
+//                                        retval += blackRookPosition[i][j];
+//                                        break;
+//                                case BLACKPAWN:
+//                                        --remainingOfficial;
+//                                        retval += PAWN_VALUE;
+//                                        retval += blackPawnPosition[i][j];
+//                                        break;
+//                                case WHITEKING:
+//                                        retval -= KING_VALUE;
+//                                        whiteKingLocation.x = j;
+//                                        whiteKingLocation.y = i;
+//                                        break;
+//                                case WHITEQUEEN:
+//                                        retval -= QUEEN_VALUE;
+//                                        retval -= whiteQueenPosition[i][j];
+//                                        break;
+//                                case WHITEBISHOP:
+//                                        retval -= BISHOP_VALUE;
+//                                        retval -= whiteBishopPosition[i][j];
+//                                        break;
+//                                case WHITEKNIGHT:
+//                                        retval -= KNIGHT_VALUE;
+//                                        retval -= whiteKnightPosition[i][j];
+//                                        break;
+//                                case WHITEROOK:
+//                                        retval -= ROOK_VALUE;
+//                                        retval -= whiteRookPosition[i][j];
+//                                        break;
+//                                case WHITEPAWN:
+//                                        --remainingOfficial;
+//                                        retval -= PAWN_VALUE;
+//                                        retval -= whitePawnPosition[i][j];
+//                        }
+//
+//		}
+//	}
+//
+//        if (remainingOfficial > END_GAME_OFFICIAL) {
+//                retval += blackKingPosition[blackKingLocation.y][blackKingLocation.x];
+//                retval -= whiteKingPosition[whiteKingLocation.y][whiteKingLocation.x];
+//        } else {
+//                retval += blackKingLatePosition[blackKingLocation.y][blackKingLocation.x];
+//                retval -= whiteKingLatePosition[whiteKingLocation.y][whiteKingLocation.x];
+//        }
+//
+//	return multiplier*retval;
+//}
+
+int weightOf(int arg, int color) {
         int multiplier = (color == BLACK)? 1:-1;
-	int retval = 0;
-	int i,j;
-        int remainingOfficial = MAX_OFFICIAL;
-        Point2D blackKingLocation, whiteKingLocation;
 
-	for(i=0; i<=7; i++) {
-		for(j=0; j<=7; j++) {
-                        switch(board[i][j]) {
-                                case BLACKKING:
-                                        retval += multiplier*KING_VALUE;
-                                        blackKingLocation.x = j;
-                                        blackKingLocation.y = i;
-                                        break;
-                                case BLACKQUEEN:
-                                        retval += QUEEN_VALUE;
-                                        retval += blackQueenPosition[i][j];
-                                        break;
-                                case BLACKBISHOP:
-                                        retval += BISHOP_VALUE;
-                                        retval += blackBishopPosition[i][j];
-                                        break;
-                                case BLACKKNIGHT:
-                                        retval += KNIGHT_VALUE;
-                                        retval += blackKnightPosition[i][j];
-                                        break;
-                                case BLACKROOK:
-                                        retval += ROOK_VALUE;
-                                        retval += blackRookPosition[i][j];
-                                        break;
-                                case BLACKPAWN:
-                                        --remainingOfficial;
-                                        retval += PAWN_VALUE;
-                                        retval += blackPawnPosition[i][j];
-                                        break;
-                                case WHITEKING:
-                                        retval -= KING_VALUE;
-                                        whiteKingLocation.x = j;
-                                        whiteKingLocation.y = i;
-                                        break;
-                                case WHITEQUEEN:
-                                        retval -= QUEEN_VALUE;
-                                        retval -= whiteQueenPosition[i][j];
-                                        break;
-                                case WHITEBISHOP:
-                                        retval -= BISHOP_VALUE;
-                                        retval -= whiteBishopPosition[i][j];
-                                        break;
-                                case WHITEKNIGHT:
-                                        retval -= KNIGHT_VALUE;
-                                        retval -= whiteKnightPosition[i][j];
-                                        break;
-                                case WHITEROOK:
-                                        retval -= ROOK_VALUE;
-                                        retval -= whiteRookPosition[i][j];
-                                        break;
-                                case WHITEPAWN:
-                                        --remainingOfficial;
-                                        retval -= PAWN_VALUE;
-                                        retval -= whitePawnPosition[i][j];
-                        }
+        switch (arg) {
+                case BLACKKING:         return multiplier*50;
+                case BLACKQUEEN:        return multiplier*25;
+                case BLACKBISHOP:       return multiplier*10;
+                case BLACKKNIGHT:       return multiplier*15;
+                case BLACKROOK:         return multiplier*15;
+                case BLACKPAWN:         return multiplier*5;
+                case WHITEKING:         return multiplier*-50;
+                case WHITEQUEEN:        return multiplier*-25;
+                case WHITEBISHOP:       return multiplier*-10;
+                case WHITEKNIGHT:       return multiplier*-15;
+                case WHITEROOK:         return multiplier*-15;
+                case WHITEPAWN:         return multiplier*-5;
+                case BLANK:             return multiplier*0;
+        }
+}
 
-		}
-	}
-
-        if (remainingOfficial > END_GAME_OFFICIAL) {
-                retval += blackKingPosition[blackKingLocation.y][blackKingLocation.x];
-                retval -= whiteKingPosition[whiteKingLocation.y][whiteKingLocation.x];
-        } else {
-                retval += blackKingLatePosition[blackKingLocation.y][blackKingLocation.x];
-                retval -= whiteKingLatePosition[whiteKingLocation.y][whiteKingLocation.x];
+int scoreOfBoard(int** board, int color) {
+        int retval = 0;
+        int i,j;
+        for(i=0; i<=7; i++) {
+                for(j=0; j<=7; j++) {
+                        retval = retval + weightOf(board[i][j], color);
+                }
         }
 
-	return multiplier*retval;
+        return retval;
 }
 
 #endif
