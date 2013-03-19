@@ -16,3 +16,8 @@ $(EXECUTABLE): $(OBJECTS)
 clean: 
 	rm $(OBJECTS)
 	rm $(EXECUTABLE)
+
+rebuild: clean all
+
+run:
+	./$(EXECUTABLE)

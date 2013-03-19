@@ -13,8 +13,8 @@
 #define BOARD_WIDTH 8
 #define BOARD_HEIGHT 8
 #define WHITE 69
-#define BLACK 669
-#define MAX_DEPTH 7
+#define BLACK -69
+#define MAX_DEPTH 6
 #define INFTY 121487
 
 // IDEA:
@@ -126,8 +126,8 @@ Node* freeList(Node* head) {
         return NULL;
 }
 
-void displayTree(Node* root, int depth) {
-        printf("\n\nat depth %i\n", depth);
+void displayTree(Node* root, int depth, int color) {
+        printf("\nat depth %i; color %i", depth, color);
         while (root != NULL) {
                 Node* i = root;
                 printf("\n");
@@ -149,6 +149,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
         --depth;
         if (depth == 0) {
                 // return the max/min sa buong list
+                //searchStart = findNextPiece(board, searchStart, color*parent->ev_sign);
                 searchStart = findNextPiece(board, searchStart, color);
                 while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
                         //printf("Found shit at: %i%i\n ", searchStart.y, searchStart.x);
@@ -165,9 +166,15 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         
                         while (traverser != NULL && parent->alpha < parent->beta) {
                                 movePieceForTraversal(board, traverser);
+                                //TODO REMOVE
+                                //if (traverser->movement.dest.x == 2, traverser->movement.dest.y == 2) {
+                                        //printf("FUCK THIS SHIT \n");
+                                        //display_board(board);
+                                //}
+                                        ////////////////
                                 //display_board(board);
-                                int temp = traverser->ev_sign * scoreOfBoard(board, color) * -1;   // ev_sign*score -> invert sign of leaf
-                                //traverser->alpha = temp; //TODO REMOVE
+                                int temp = traverser->ev_sign * scoreOfBoard(board, color*parent->ev_sign) * -1;   // ev_sign*score -> invert sign of leaf
+                                traverser->alpha = temp; //TODO REMOVE
                                 if (temp > parent->alpha) {
                                         parent->alpha = temp;
                                         if (depth == MAX_DEPTH - 1) {
@@ -178,7 +185,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 revertPieceMove(board, traverser);
                                 traverser = traverser->next;
                         }
-                        //displayTree(parent,depth);
+                        //displayTree(parent,depth,color);
                         parent->children = freeList(parent->children);
 
                         if (searchStart.x+1 >= BOARD_WIDTH) {
@@ -202,7 +209,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         Node* traverser = parent->children->next;
                         while (traverser != NULL && parent->alpha < parent->beta) {
                                 movePieceForTraversal(board, traverser);
-                                minimax(board, color, depth, traverser);
+                                minimax(board, color*-1, depth, traverser);
                                 if (traverser->alpha > parent->alpha) {
                                         parent->alpha = traverser->alpha;
                                         if (depth == MAX_DEPTH - 1) {
@@ -213,7 +220,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 revertPieceMove(board, traverser);
                                 traverser = traverser->next;
                         }
-                        //displayTree(parent,depth);
+                        //displayTree(parent,depth, color);
                         parent->children = freeList(parent->children);
 
                         searchStart.y += (searchStart.x+1)/BOARD_WIDTH;
