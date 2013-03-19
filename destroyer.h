@@ -73,9 +73,7 @@ void getParentMove(VERTEX* arg) {
 	VERTEX* alpha = arg;
 	
 	while(alpha->parent->depth > 0) {
-		alpha = arg->parent;
-		printf("Parent depth %d\n", alpha->depth);
-		//printf("Getting parent...\n");
+		alpha = alpha->parent;
 	}
 	
 	x_1 = alpha->fromx;
@@ -128,7 +126,6 @@ void expansion(VERTEX* arg, int turn) {
 				arg->children[c]->boardscore = scoreOfBoard(arg->children[c]->boardstate);
 				
 				if(arg->children[c]->boardscore >= score) {
-					printf("@@@@@@@@@@@@@@@@@@@@@@@@ The best move\n");
 					score = arg->children[c]->boardscore;
 					getParentMove(arg->children[c]);
 					

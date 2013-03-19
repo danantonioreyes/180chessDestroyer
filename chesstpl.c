@@ -151,22 +151,22 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	
 	int dummy = 0;
 	//this block expands until depth 3, need to fix
-	while(expansionQ->next->v->depth <= 3)
-	{
-		printf("Generating node %d\n", ++dummy); 	
-		alpha = expansionQ->next->v;
+	// while(expansionQ->next->v->depth <= 3)
+	// {
+		// printf("Generating node %d\n", ++dummy); 	
+		// alpha = expansionQ->next->v;
 		
-		//beta = expansionQ->next;
-		if(turnCounter % 2 == 0) expansion(alpha, WHITEKING);
-		else expansion(alpha, BLACKKING);
-		for(i=0; alpha->children[i] != NULL; i++) {
-			printf("Insertion %d\n", i);
-			insert(expansionQ, alpha->children[i]);
-		}
-		turnCounter++;
-		expansionQ->next = expansionQ->next->next;
-		//free(beta);
-	}
+		// //beta = expansionQ->next;
+		// if(turnCounter % 2 == 0) expansion(alpha, WHITEKING);
+		// else expansion(alpha, BLACKKING);
+		// for(i=0; alpha->children[i] != NULL; i++) {
+			// printf("Insertion %d\n", i);
+			// insert(expansionQ, alpha->children[i]);
+		// }
+		// turnCounter++;
+		// expansionQ->next = expansionQ->next->next;
+		// //free(beta);
+	// }
 	
 	//end game tree generation
 	
