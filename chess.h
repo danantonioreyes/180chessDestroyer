@@ -356,6 +356,15 @@ int moveok(int **board,int i1,int j1,int i2,int j2) { //if move configuration is
 
 int valid_move(int **board,int i1,int j1,int i2,int j2,int turn) {
     int validity,temp;
+    /// TODO THIS IS A PATCH FOR THE PAWN EATING CRAP
+    //if (i1 >= BOARD_HEIGHT || j1 >= BOARD_WIDTH || i2 >= BOARD_HEIGHT || j2 >= BOARD_WIDTH)
+    if (i1 >= 8 || j1 >= 8 || i2 >=  8 || j2 >= 8) {
+            return 0;
+    }
+    if (board[i1][j1] == BLACKPAWN || board[i1][j1] == WHITEPAWN) {
+            if (board[i2][j2] != BLANK && (j1 == j2))           // if may laman yung tile tapos paharap yung pawn
+                    return 0;
+    }
     
     validity=0;
     if ((turn-7)*(safeboard(board,i1,j1)-7)>0) {//check if correct turn

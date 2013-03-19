@@ -18,6 +18,7 @@ typedef struct Node_t {
         int alpha;
         int beta;
         int ev_sign;
+        int pieceMoved;
         struct Node_t* children;
         struct Node_t* next;
 }Node;

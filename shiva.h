@@ -85,14 +85,6 @@ void movepiece(int **board,int i1,int j1,int i2,int j2) {
 }
 
 Point2D findNextPiece(int **board, Point2D start, int color) {
-        //printf("search starts at %i%i\n", start.y, start.x);
-        //for (; start.y < BOARD_HEIGHT && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.y) {
-        //        printf("color %i getcol %i %i\n", color, getColor(board[start.y][start.x]), board[start.y][start.x]);
-        //        for (; start.x < BOARD_WIDTH && (board[start.y][start.x] == BLANK || color != getColor(board[start.y][start.x])); ++start.x) {
-        //                printf("yx %i%i\n", start.y, start.x);
-        //        }
-        //        start.x = 0;
-        //}
         for(; start.y < BOARD_HEIGHT; ++start.y) {
                 for (; start.x < BOARD_WIDTH; ++start.x) {
                         if (board[start.y][start.x] != BLANK && color == getColor(board[start.y][start.x]))
@@ -106,12 +98,13 @@ Point2D findNextPiece(int **board, Point2D start, int color) {
 
 void movePieceForTraversal(int** board, Node* node) {
         node->eaten = board[node->movement.dest.y][node->movement.dest.x];
+        node->pieceMoved = board[node->movement.source.y][node->movement.source.x];
         movepiece(board, node->movement.source.y, node->movement.source.x, node->movement.dest.y, node->movement.dest.x);
 }
 
 void revertPieceMove(int** board, Node* node) {
         // TODO HANDLE castling here and in kingMoves
-        board[node->movement.source.y][node->movement.source.x] = board[node->movement.dest.y][node->movement.dest.x];
+        board[node->movement.source.y][node->movement.source.x] = node->pieceMoved;
         board[node->movement.dest.y][node->movement.dest.x] = node->eaten;
 }
 
