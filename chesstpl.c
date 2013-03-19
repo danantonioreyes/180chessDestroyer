@@ -118,6 +118,8 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	score = -9999; //reset para may moves pa rin kahit bano-bano na
 	
 	NODE* expansionQ = (NODE*)malloc(sizeof(NODE));
+	expansionQ->v = NULL;
+	expansionQ->next = NULL; 
 	
 	//start generating the game tree up to depth 3
 	VERTEX* root = (VERTEX*)malloc(sizeof(VERTEX));
@@ -126,6 +128,7 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	root->tox = -1;
 	root->toy = -1;
 	root->depth = 0;
+	root->parent = NULL;
 	root->boardstate = (int**)malloc(sizeof(int*)*8);
 	for (i=0; i<8; i++) 
         root->boardstate[i]=(int*)malloc(sizeof(int)*8);
@@ -141,23 +144,30 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	//insert root children to expansion Q
 	for(i=0; root->children[i] != NULL; i++) insert(expansionQ, root->children[i]);
 	
+	
 	VERTEX* alpha;
 	NODE* beta;
-	int c = 0;
+	int turnCounter = 0;
 	
-	/*this block expands until depth 3, need to fix
+	int dummy = 0;
+	//this block expands until depth 3, need to fix
 	while(expansionQ->next->v->depth <= 3)
 	{
+		printf("Generating node %d\n", ++dummy); 	
 		alpha = expansionQ->next->v;
-		beta = expansionQ->next;
-		if(c % 2 == 0) expansion(alpha, WHITEKING);
-		else expansion(alpha, BLACKKING);
-		for(i=0; alpha->children[i] != NULL; i++) insert(expansionQ, alpha->children[i]);
 		
+		//beta = expansionQ->next;
+		if(turnCounter % 2 == 0) expansion(alpha, WHITEKING);
+		else expansion(alpha, BLACKKING);
+		for(i=0; alpha->children[i] != NULL; i++) {
+			printf("Insertion %d\n", i);
+			insert(expansionQ, alpha->children[i]);
+		}
+		turnCounter++;
 		expansionQ->next = expansionQ->next->next;
-		free(beta);
+		//free(beta);
 	}
-	*/
+	
 	//end game tree generation
 	
 	*i1 = x_1;
@@ -165,10 +175,13 @@ void black_move(int** board, int *i1,int *j1,int *i2,int *j2) {
 	*i2 = x_2;
 	*j2 = y_2;
 	
+	//need to free up game tree here
+	
 	
 	
 	//gg exploit
-	/*for(i=7; i>=0; i--) 
+	/*int i,j,x,y;
+	for(i=7; i>=0; i--) 
 		for(j=7; j>=0; j--) {
 			for(x=7; x>=0; x--)
 				for(y=7; y>=0; y--) {
