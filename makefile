@@ -1,7 +1,6 @@
 CC = gcc
 CFLAGS = -lm
-SOURCES = chesstpl.c
-HEADERS = shiva.h
+SOURCES = chess2.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = test
 
