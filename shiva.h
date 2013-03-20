@@ -11,7 +11,7 @@
 #include "movegen.h"
 #include "listmanipulator.h"
 #include "moveevaluator.h"
-#define MAX_DEPTH 6
+#define MAX_DEPTH 5
 #define INFTY 1241894
 
 // IDEA:
