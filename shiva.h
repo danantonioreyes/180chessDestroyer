@@ -116,7 +116,6 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         }
                         searchStart = findNextPiece(board, searchStart, color);
                 }
-                parent->alpha   *= -1;                          // invert sign after everything has been considered
                 if (generatedMoves == 0) {
                         // if no moves are generated, then it must be a checkmate
                         int temp = INFTY*depth*parent->ev_sign;
@@ -124,8 +123,6 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 temp *= -1;
                         if (temp > parent->alpha) {
                                 parent->alpha = temp;
-                                //printf("Found checkmate opportunity at depth %i\n", depth);
-                                //display_board(board, "haha");
                         }
                 }
                 parent->alpha *= -1;            // invert sign when it pops
@@ -167,8 +164,6 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 temp *= -1;
                         if (temp > parent->alpha) {
                                 parent->alpha = temp;
-                                //printf("Found checkmate opportunity at depth %i\n", depth);
-                                //display_board(board, "haha");
                         }
                 }
                 parent->alpha *= -1;            // invert sign when it pops
