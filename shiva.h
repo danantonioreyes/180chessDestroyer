@@ -2,6 +2,8 @@
 #define SHIVA_H
 // ^ to avoid multiple inclusion of the file
 
+#define BOARD_WIDTH 8
+#define BOARD_HEIGHT 8
 #include<math.h>
 #include<stdio.h>
 #include<string.h>
@@ -88,6 +90,9 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
 
                         Node* traverser = parent->children->next;
                         
+                        if (traverser != NULL) {
+                                ++generatedMoves;
+                        }
                         while (traverser != NULL && parent->alpha < parent->beta) {
                                 ++generatedMoves;
                                 movePieceForTraversal(board, traverser);
@@ -118,7 +123,8 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 temp *= -1;
                         if (temp > parent->alpha) {
                                 parent->alpha = temp;
-                                printf("Found checkmate opportunity at depth %i\n", depth);
+                                //printf("Found checkmate opportunity at depth %i\n", depth);
+                                //display_board(board, "haha");
                         }
                 }
                 parent->alpha *= -1;            // invert sign when it pops
@@ -131,9 +137,10 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         parent->children = generateMoves(board, searchStart, parent);
 
                         Node* traverser = parent->children->next;
-                        // if king at walang mamove, at walang
-                        while (traverser != NULL && parent->alpha < parent->beta) {
+                        if (traverser != NULL) {
                                 ++generatedMoves;
+                        }
+                        while (traverser != NULL && parent->alpha < parent->beta) {
                                 movePieceForTraversal(board, traverser);
                                 minimax(board, color*-1, depth, traverser);
                                 if (traverser->alpha > parent->alpha) {
@@ -159,7 +166,8 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                                 temp *= -1;
                         if (temp > parent->alpha) {
                                 parent->alpha = temp;
-                                printf("Found checkmate opportunity at depth %i\n", depth);
+                                //printf("Found checkmate opportunity at depth %i\n", depth);
+                                //display_board(board, "haha");
                         }
                 }
                 parent->alpha *= -1;            // invert sign when it pops

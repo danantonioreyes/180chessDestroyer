@@ -56,6 +56,7 @@ int **init_board(int *board[]) {
         board[1][i]=BLACKPAWN;
         board[6][i]=WHITEPAWN;
     }
+
     
     bkmoved=wkmoved=0; //reset flags for castling
     
