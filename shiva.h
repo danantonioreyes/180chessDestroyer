@@ -2,6 +2,8 @@
 #define SHIVA_H
 // ^ to avoid multiple inclusion of the file
 
+#define BOARD_WIDTH 8
+#define BOARD_HEIGHT 8
 #include<math.h>
 #include<stdio.h>
 #include<string.h>
@@ -12,33 +14,6 @@
 #include "moveevaluator.h"
 #define MAX_DEPTH 5
 #define INFTY 1241894
-
-void movepiece(int **board,int i1,int j1,int i2,int j2) {
-    
-    board[i2][j2]=board[i1][j1];
-    board[i1][j1]=BLANK;
-    
-    //check if castling
-    if (board[i2][j2]==BLACKKING OR board[i2][j2]==WHITEKING)
-    {
-        if (j2>j1+1) {
-            board[board[i2][j2]-1][5]=board[i2][j2]+4;
-            board[board[i2][j2]-1][7]=BLANK;
-        }
-        if (j2<j1-2) {
-            board[board[i2][j2]-1][2]=board[i2][j2]+4;
-            board[board[i2][j2]-1][0]=BLANK;            
-        }
-    }
-    
-    checkqueening(board);
-    
-    //if kings moved, no more castling
-    if (board[i2][j2]==BLACKKING)
-        bkmoved=1;
-    if (board[i2][j2]==WHITEKING)
-        wkmoved=1;
-}
 
 Point2D findNextPiece(int **board, Point2D start, int color) {
         for(; start.y < BOARD_HEIGHT; ++start.y) {
@@ -104,18 +79,22 @@ void displayTree(Node* root, int depth, int color) {
 
 // TODO ETO NA YUNG SUSUNOD
 void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NEEDED ARGUMENTS
-        //printf("alphabeta %i %i \ndepth %i\n", parent->alpha, parent->beta, depth);
         
         Point2D searchStart = {0,0};
         --depth;
         if (depth == 0) {
+                int generatedMoves = 0;
                 searchStart = findNextPiece(board, searchStart, color);
                 while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
                         parent->children = generateMoves(board, searchStart, parent);
 
                         Node* traverser = parent->children->next;
                         
+                        if (traverser != NULL) {
+                                ++generatedMoves;
+                        }
                         while (traverser != NULL && parent->alpha < parent->beta) {
+                                ++generatedMoves;
                                 movePieceForTraversal(board, traverser);
                                 int temp = traverser->ev_sign * scoreOfBoard(board, color*parent->ev_sign) * -1;   // ev_sign*score -> invert sign of leaf
                                 if (temp > parent->alpha) {
@@ -137,15 +116,34 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         }
                         searchStart = findNextPiece(board, searchStart, color);
                 }
+<<<<<<< HEAD
                 parent->alpha   *= -1;                          // invert sign after everything has been considered
+=======
+                if (generatedMoves == 0) {
+                        // if no moves are generated, then it must be a checkmate
+                        int temp = INFTY*depth*parent->ev_sign;
+                        if (!checked(board, (color == WHITEKING)? BLACKKING:WHITEKING))        // if the enemy king is not checked but cannot move anything, then it's a stalemate and both sides try to avoid it
+                                temp *= -1;
+                        if (temp > parent->alpha) {
+                                parent->alpha = temp;
+                                //printf("Found checkmate opportunity at depth %i\n", depth);
+                                //display_board(board, "haha");
+                        }
+                }
+                parent->alpha *= -1;            // invert sign when it pops
+>>>>>>> aba34174f606133bcf28ddc2a256bdbfcb1a24b7
         }
         else {
                 // NOTE: 1ST PARENT IS ROOT NODE
+                int generatedMoves = 0;
                 searchStart = findNextPiece(board, searchStart, color);
                 while (searchStart.y < BOARD_HEIGHT && searchStart.x < BOARD_WIDTH) {
                         parent->children = generateMoves(board, searchStart, parent);
 
                         Node* traverser = parent->children->next;
+                        if (traverser != NULL) {
+                                ++generatedMoves;
+                        }
                         while (traverser != NULL && parent->alpha < parent->beta) {
                                 movePieceForTraversal(board, traverser);
                                 minimax(board, color*-1, depth, traverser);
@@ -165,8 +163,29 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         searchStart.x = (searchStart.x+1)%BOARD_WIDTH;
                         searchStart = findNextPiece(board, searchStart, color);
                 }
+                if (generatedMoves == 0) {
+                        // if no moves are generated, then it must be a checkmate or a stalemate
+                        int temp = INFTY*depth*parent->ev_sign;
+                        if (!checked(board, (color == WHITEKING)? BLACKKING:WHITEKING))         // if the enemy king is not checked but cannot move anything, then it's a stalemate and both sides try to avoid it
+                                temp *= -1;
+                        if (temp > parent->alpha) {
+                                parent->alpha = temp;
+                                //printf("Found checkmate opportunity at depth %i\n", depth);
+                                //display_board(board, "haha");
+                        }
+                }
                 parent->alpha *= -1;            // invert sign when it pops
         }
 }
 
+void shiva_main(int** board,int *i1,int *j1,int *i2,int *j2 ){
+        Node* root = createNode((Movement){0}, -INFTY*MAX_DEPTH, INFTY*MAX_DEPTH, 1, NULL, NULL);
+        minimax(board, BLACK, MAX_DEPTH, root);
+        (*i1) = root->movement.source.y;
+        (*j1) = root->movement.source.x;
+        (*i2) = root->movement.dest.y;
+        (*j2) = root->movement.dest.x;
+        printf("Black move: %c%i %c%i", (*i1)+'A', (*j1)+1, (*i2)+'A', (*j2)+1);
+        free(root);
+}
 #endif

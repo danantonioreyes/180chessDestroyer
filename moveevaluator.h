@@ -2,8 +2,6 @@
 #define MOVE_EVALUATOR_H
 #include <math.h>
 
-#define BOARD_WIDTH 8
-#define BOARD_HEIGHT 8
 #define KING_VALUE    20000
 #define QUEEN_VALUE   900
 #define BISHOP_VALUE  330

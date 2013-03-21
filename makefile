@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -lm
-SOURCES = chess2.c
+SOURCES = chess3.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = test
 

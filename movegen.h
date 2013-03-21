@@ -116,25 +116,29 @@ Node* bishopMoves(int **board, Point2D location, Node* parent) {
         GET_NODE_ATTRIB(parent);                // NOTE: this initializes some variables
 
         // move up left
-        for (traverser = location, --traverser.y, --traverser.x; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); --traverser.y, --traverser.x) {
+        for (traverser = location, --traverser.y, --traverser.x; traverser.x >=0 && traverser.y >=0; --traverser.y, --traverser.x) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move down right
-        for (traverser = location, ++traverser.y, ++traverser.x; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); ++traverser.y, ++traverser.x) {
+        for (traverser = location, ++traverser.y, ++traverser.x; traverser.x < BOARD_WIDTH && traverser.y < BOARD_HEIGHT; ++traverser.y, ++traverser.x) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         //
         // move up right
-        for (traverser = location, ++traverser.x, --traverser.y; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); ++traverser.x, --traverser.y) {
+        for (traverser = location, ++traverser.x, --traverser.y; traverser.x < BOARD_WIDTH && traverser.y >= 0; ++traverser.x, --traverser.y) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move down left
-        for (traverser = location, --traverser.x, ++traverser.y; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); --traverser.x, ++traverser.y) {
+        for (traverser = location, --traverser.x, ++traverser.y; traverser.y < BOARD_HEIGHT && traverser.x >= 0; --traverser.x, ++traverser.y) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
 
         return head;
@@ -146,24 +150,28 @@ Node* rookMoves(int **board, Point2D location, Node* parent) {
         GET_NODE_ATTRIB(parent);                // NOTE: this initializes some variables
 
         // move up
-        for (traverser.x = location.x, traverser.y = location.y-1; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); --traverser.y) {
+        for (traverser.x = location.x, traverser.y = location.y-1; traverser.y >= 0; --traverser.y) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move down
-        for (traverser = location, ++traverser.y; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); ++traverser.y) {
+        for (traverser = location, ++traverser.y; traverser.y < BOARD_HEIGHT; ++traverser.y) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move right
-        for (traverser = location, ++traverser.x; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); ++traverser.x) {
+        for (traverser = location, ++traverser.x; traverser.x < BOARD_WIDTH; ++traverser.x) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
         // move move left
-        for (traverser = location, --traverser.x; valid_move(board, location.y, location.x, traverser.y, traverser.x, turn); --traverser.x) {
+        for (traverser = location, --traverser.x; traverser.x >= 0; --traverser.x) {
                 movement.dest = traverser;
-                head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
+                if (valid_move(board, location.y, location.x, traverser.y, traverser.x, turn))
+                        head = push(head, createNodeWithHead(movement, alpha, beta, ev_sign, NULL, NULL));
         }
 
         return head;
