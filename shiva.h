@@ -116,9 +116,7 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         }
                         searchStart = findNextPiece(board, searchStart, color);
                 }
-<<<<<<< HEAD
                 parent->alpha   *= -1;                          // invert sign after everything has been considered
-=======
                 if (generatedMoves == 0) {
                         // if no moves are generated, then it must be a checkmate
                         int temp = INFTY*depth*parent->ev_sign;
@@ -131,7 +129,6 @@ void minimax(int **board, int color, int depth, Node* parent) { // TODO CHECK NE
                         }
                 }
                 parent->alpha *= -1;            // invert sign when it pops
->>>>>>> aba34174f606133bcf28ddc2a256bdbfcb1a24b7
         }
         else {
                 // NOTE: 1ST PARENT IS ROOT NODE
